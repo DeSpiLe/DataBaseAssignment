@@ -5,6 +5,31 @@ public class Table {
     private boolean reserved;
     private String firstName, secondName, phoneNumber, status;
 
+    public Table(short id, short capacity, boolean reserved, String firstName, String secondName, String phoneNumber, String status) {
+        this.id = id;
+        this.capacity = capacity;
+        this.reserved = reserved;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.phoneNumber = phoneNumber;
+        this.status = status;
+    }
+
+
+    public Table(short id, short capacity, boolean reserved) {
+        setId(id);
+        setCapacity(capacity);
+        setReserved(reserved);
+    }
+
+    public Table(short id, short capacity, boolean reserved, String status) {
+        setId(id);
+        setCapacity(capacity);
+        setReserved(reserved);
+        setStatus(status);
+    }
+
+    // Новый конструктор для использования при создании объекта из результатов запроса
     public Table(short id, String firstName, String secondName, short capacity, boolean reserved, String phoneNumber, String status) {
         setId(id);
         setFirstName(firstName);
@@ -13,12 +38,6 @@ public class Table {
         setReserved(reserved);
         setPhoneNumber(phoneNumber);
         setStatus(status);
-    }
-
-    public Table(short id, short capacity, boolean reserved) {
-        setId(id);
-        setCapacity(capacity);
-        setReserved(reserved);
     }
 
     public short getId() {

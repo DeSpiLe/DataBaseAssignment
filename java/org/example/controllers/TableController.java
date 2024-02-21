@@ -20,11 +20,6 @@ public class TableController {
     }
 
 
-    public String getTable(short id) {
-        Table table = repository.getTable(id);
-        return (table == null ? "404 Table was not found" : table.toString());
-    }
-
     public String getAllTables() {
         try {
             List<Table> tables = repository.getAllTables();
@@ -42,11 +37,6 @@ public class TableController {
     public String reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved) {
         boolean reserve = repository.reserveTable(id, firstName, secondName, phonenumber, reserved);
         return (reserve ? "Table has been reserved" : "Table reservation failed");
-    }
-
-    public String editTableInfo(short id, String firstName, String secondName, short capacity, String phoneNumber) {
-        boolean edited = repository.editInfo(id, firstName, secondName, capacity, phoneNumber);
-        return (edited ? "Table information has been updated" : "Failed to update table information");
     }
 
     public String deleteTable(short id) {
@@ -100,4 +90,16 @@ public class TableController {
             System.out.println("Database reset failed: " + e.getMessage());
         }
     }
+
+    public String cancelReservationByNameAndSurname(String firstName, String secondName) {
+        boolean canceled = repository.cancelReservationByNameAndSurname(firstName, secondName);
+        return (canceled ? "Reservation canceled successfully." : "Failed to cancel reservation. No reservation found for the provided name and surname.");
+    }
+
+    public String findReservationByNameAndSurname(String firstName, String secondName) {
+        String reservationDetails = repository.findReservationByNameAndSurname(firstName, secondName);
+        return (reservationDetails != null ? "Reservation details: " + reservationDetails : "No reservation found for the provided name and surname.");
+    }
+
+
 }

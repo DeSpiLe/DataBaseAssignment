@@ -119,10 +119,12 @@ public class MyApp {
             System.out.println("User Menu:");
             System.out.println("1. View available tables");
             System.out.println("2. Reserve a table");
+            System.out.println("3. Cancel table reservation");
+            System.out.println("4. Find reservation by name and surname");
             System.out.println("0. Back to main menu");
             System.out.println();
             try {
-                System.out.println("Enter option (0-2): ");
+                System.out.println("Enter option (0-4): ");
                 int userOption = scanner.nextInt();
                 switch (userOption) {
                     case 0:
@@ -133,6 +135,12 @@ public class MyApp {
                         break;
                     case 2:
                         reserveTable();
+                        break;
+                    case 3:
+                        cancelReservationByNameAndSurname();
+                        break;
+                    case 4:
+                        findReservationByNameAndSurname();
                         break;
                     default:
                         System.out.println("Invalid option. Please try again.");
@@ -145,6 +153,24 @@ public class MyApp {
             }
             System.out.println("*************************");
         }
+    }
+
+    private void cancelReservationByNameAndSurname() {
+        System.out.println("Please enter your name:");
+        String name = scanner.next();
+        System.out.println("Please enter your surname:");
+        String surname = scanner.next();
+        String response = controller.cancelReservationByNameAndSurname(name, surname);
+        System.out.println(response);
+    }
+
+    private void findReservationByNameAndSurname() {
+        System.out.println("Please enter your name:");
+        String name = scanner.next();
+        System.out.println("Please enter your surname:");
+        String surname = scanner.next();
+        String response = controller.findReservationByNameAndSurname(name, surname);
+        System.out.println(response);
     }
 
     private void setStatus(){

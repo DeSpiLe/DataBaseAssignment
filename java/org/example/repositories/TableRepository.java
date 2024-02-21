@@ -55,7 +55,11 @@ public class TableRepository implements ITableRepository {
             if (resultSet.next()) {
                 return new Table(resultSet.getShort("id"),
                         resultSet.getShort("capacity"),
-                        resultSet.getBoolean("reserved")
+                        resultSet.getBoolean("reserved"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("secondName"),
+                        resultSet.getString("phoneNumber"),
+                        resultSet.getString("status")
                 );
             }
         } catch (SQLException e) {
@@ -80,16 +84,19 @@ public class TableRepository implements ITableRepository {
             String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-            List<Table> tables = new LinkedList<>();
+            List<Table> reservedTables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
                         resultSet.getShort("capacity"),
-                        resultSet.getBoolean("reserved")
+                        resultSet.getBoolean("reserved"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("secondName"),
+                        resultSet.getString("phoneNumber"),
+                        resultSet.getString("status")
                 );
-                tables.add(table);
+                reservedTables.add(table);
             }
-            return tables;
-
+            return reservedTables;
         } catch (SQLException e) {
             System.out.println("sql error: " + e.getMessage());
         } finally {
@@ -104,16 +111,16 @@ public class TableRepository implements ITableRepository {
     }
 
     @Override
-    public boolean reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved) {
+    public boolean reserveTable(short id, String firstName, String secondName, String phoneNumber, boolean reserved) {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "UPDATE tables SET reserved = ?, firstname = ?, secondname = ?, phonenumber = ? WHERE id = ?";
+            String sql = "UPDATE tables SET reserved = ?, firstName = ?, secondName = ?, phoneNumber = ? WHERE id = ?";
             PreparedStatement statement = con.prepareStatement(sql);
-            statement.setBoolean(1, true);
+            statement.setBoolean(1, reserved);
             statement.setString(2, firstName);
             statement.setString(3, secondName);
-            statement.setString(4, phonenumber);
+            statement.setString(4, phoneNumber);
             statement.setShort(5, id);
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
@@ -160,11 +167,10 @@ public class TableRepository implements ITableRepository {
     @Override
     public boolean deleteTable(short id) {
         Connection con = null;
-        PreparedStatement ps = null;
         try {
             con = db.getConnection();
             String sql = "DELETE FROM tables WHERE id = ?";
-            ps = con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setShort(1, id);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -173,9 +179,6 @@ public class TableRepository implements ITableRepository {
             return false;
         } finally {
             try {
-                if (ps != null) {
-                    ps.close();
-                }
                 if (con != null) {
                     con.close();
                 }
@@ -196,13 +199,13 @@ public class TableRepository implements ITableRepository {
             List<Table> reservedTables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstname"),
-                        resultSet.getString("secondname"),
                         resultSet.getShort("capacity"),
                         resultSet.getBoolean("reserved"),
-                        resultSet.getString("phonenumber"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("secondName"),
+                        resultSet.getString("phoneNumber"),
                         resultSet.getString("status")
-                        );
+                );
                 reservedTables.add(table);
             }
             return reservedTables;
@@ -224,17 +227,17 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT  id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false";
+            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<Table> availableTables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstname"),
-                        resultSet.getString("secondname"),
                         resultSet.getShort("capacity"),
                         resultSet.getBoolean("reserved"),
-                        resultSet.getString("phonenumber"),
+                        resultSet.getString("firstName"),
+                        resultSet.getString("secondName"),
+                        resultSet.getString("phoneNumber"),
                         resultSet.getString("status")
                 );
                 availableTables.add(table);
@@ -282,18 +285,19 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "TRUNCATE TABLE tables";
+            String sql = "DELETE FROM tables";
             PreparedStatement statement = con.prepareStatement(sql);
-            return statement.executeUpdate() > 0;
+            statement.execute();
+            return true;
         } catch (SQLException e) {
-            System.out.println("Error clearing tables: " + e.getMessage());
+            System.out.println("sql error: " + e.getMessage());
             return false;
         } finally {
             try {
                 if (con != null)
                     con.close();
             } catch (SQLException e) {
-                System.out.println("Error closing connection: " + e.getMessage());
+                System.out.println("sql error: " + e.getMessage());
             }
         }
     }
@@ -303,18 +307,71 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "ALTER SEQUENCE tables_id_seq RESTART WITH 1";
+            String sql = "ALTER SEQUENCE tables_id_seq RESTART WITH 1;";
             PreparedStatement statement = con.prepareStatement(sql);
-            return statement.executeUpdate() > 0;
+            statement.execute();
+            return true;
         } catch (SQLException e) {
-            System.out.println("Error resetting auto-increment: " + e.getMessage());
+            System.out.println("sql error: " + e.getMessage());
             return false;
         } finally {
             try {
                 if (con != null)
                     con.close();
             } catch (SQLException e) {
-                System.out.println("Error closing connection: " + e.getMessage());
+                System.out.println("sql error: " + e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public boolean cancelReservationByNameAndSurname(String firstName, String secondName) {
+        Connection con = null;
+        try {
+            con = db.getConnection();
+            String sql = "UPDATE tables SET reserved = false, firstName = null, secondName = null, phoneNumber = null WHERE firstName = ? AND secondName = ?";
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, firstName);
+            statement.setString(2, secondName);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.out.println("sql error: " + e.getMessage());
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                System.out.println("sql error: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String findReservationByNameAndSurname(String firstName, String secondName) {
+        Connection con = null;
+        try {
+            con = db.getConnection();
+            String sql = "SELECT id FROM tables WHERE firstName = ? AND secondName = ?";
+            PreparedStatement statement = con.prepareStatement(sql);
+            statement.setString(1, firstName);
+            statement.setString(2, secondName);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return "Reservation found for " + firstName + " " + secondName + " with table ID: " + resultSet.getShort("id");
+            } else {
+                return "No reservation found for " + firstName + " " + secondName;
+            }
+        } catch (SQLException e) {
+            System.out.println("sql error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                System.out.println("sql error: " + e.getMessage());
             }
         }
     }
