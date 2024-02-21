@@ -12,9 +12,8 @@ public class TableController {
         this.repository = repository;
     }
 
-    public String createTable(String firstName, String secondName, short capacity, String reserved, String phoneNumber) {
-        boolean reserve = reserved.equalsIgnoreCase("yes");
-        Table table = new Table((short) 0, firstName, secondName, capacity, reserve, phoneNumber, "Normal");
+    public String createTable(short capacity, boolean reserved) {
+        Table table = new Table((short) 0, capacity, reserved);
         boolean created = repository.createTable(table);
 
         return (created ? "Table has been created" : "Table creation failed");
@@ -40,9 +39,9 @@ public class TableController {
         }
     }
 
-    public String reserveTable(short id) {
-        boolean reserved = repository.reserveTable(id);
-        return (reserved ? "Table has been reserved" : "Table reservation failed");
+    public String reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved) {
+        boolean reserve = repository.reserveTable(id, firstName, secondName, phonenumber, reserved);
+        return (reserve ? "Table has been reserved" : "Table reservation failed");
     }
 
     public String editTableInfo(short id, String firstName, String secondName, short capacity, String phoneNumber) {

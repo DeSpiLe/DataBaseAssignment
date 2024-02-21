@@ -8,7 +8,7 @@ public interface ITableRepository {
  boolean createTable(Table table);
  Table getTable(short id);
  List<Table> getAllTables();
- boolean reserveTable(short id);
+ boolean reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved);
  boolean editInfo(short id, String firstName, String secondName, short capacity, String phoneNumber);
  boolean deleteTable(short id);
  List<Table> getReservedTables(); // Новый метод для получения зарезервированных столов

@@ -107,6 +107,7 @@ public class MyApp {
         }
     }
 
+
     private void restart() {
         controller.resetDatabase();
         System.out.println("Database reset successful.");
@@ -161,17 +162,10 @@ public class MyApp {
     }
 
     private void createTableMenu() {
-        System.out.println("Please enter name of guest");
-        String name = scanner.next();
-        System.out.println("Please enter surname of guest");
-        String surname = scanner.next();
-        System.out.println("How many people will be behind a table");
+        System.out.println("How many people can be behind a table");
         short capacity = scanner.nextShort();
-        String reserved = "YES";
-        System.out.println("Enter phone number of guest");
-        String phoneNumber = scanner.next();
-
-        String response = controller.createTable(name, surname, capacity, reserved, phoneNumber);
+        boolean reserved = false;
+        String response = controller.createTable(capacity, reserved);
         System.out.println(response);
     }
 
@@ -191,7 +185,14 @@ public class MyApp {
     private void reserveTable() {
         System.out.println("Please enter number(id) of the table you want to reserve:");
         short id = scanner.nextShort();
-        String response = controller.reserveTable(id);
+        System.out.println("Please enter your name");
+        String name = scanner.next();
+        System.out.println("Please enter your surname");
+        String surname = scanner.next();
+        System.out.println("Please enter your phone number");
+        String phonenumber = scanner.next();
+        boolean reserved = true;
+        String response = controller.reserveTable(id, name, surname, phonenumber, reserved);
         System.out.println(response);
     }
 

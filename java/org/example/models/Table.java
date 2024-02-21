@@ -5,9 +5,6 @@ public class Table {
     private boolean reserved;
     private String firstName, secondName, phoneNumber, status;
 
-    public Table() {
-    }
-
     public Table(short id, String firstName, String secondName, short capacity, boolean reserved, String phoneNumber, String status) {
         setId(id);
         setFirstName(firstName);
@@ -16,6 +13,12 @@ public class Table {
         setReserved(reserved);
         setPhoneNumber(phoneNumber);
         setStatus(status);
+    }
+
+    public Table(short id, short capacity, boolean reserved) {
+        setId(id);
+        setCapacity(capacity);
+        setReserved(reserved);
     }
 
     public short getId() {

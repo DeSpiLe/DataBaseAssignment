@@ -54,12 +54,9 @@ public class TableRepository implements ITableRepository {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("secondName"),
                         resultSet.getShort("capacity"),
-                        resultSet.getBoolean("reserved"),
-                        resultSet.getString("phoneNumber"),
-                        resultSet.getString("status"));
+                        resultSet.getBoolean("reserved")
+                );
             }
         } catch (SQLException e) {
             System.out.println("sql error: " + e.getMessage());
@@ -86,12 +83,9 @@ public class TableRepository implements ITableRepository {
             List<Table> tables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("secondName"),
                         resultSet.getShort("capacity"),
-                        resultSet.getBoolean("reserved"),
-                        resultSet.getString("phoneNumber"),
-                        resultSet.getString("status"));
+                        resultSet.getBoolean("reserved")
+                );
                 tables.add(table);
             }
             return tables;
@@ -110,14 +104,17 @@ public class TableRepository implements ITableRepository {
     }
 
     @Override
-    public boolean reserveTable(short id) {
+    public boolean reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved) {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "UPDATE tables SET reserved = ? WHERE id = ?";
+            String sql = "UPDATE tables SET reserved = ?, firstname = ?, secondname = ?, phonenumber = ? WHERE id = ?";
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setBoolean(1, true);
-            statement.setShort(2, id);
+            statement.setString(2, firstName);
+            statement.setString(3, secondName);
+            statement.setString(4, phonenumber);
+            statement.setShort(5, id);
             int rowsUpdated = statement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -199,12 +196,13 @@ public class TableRepository implements ITableRepository {
             List<Table> reservedTables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("secondName"),
+                        resultSet.getString("firstname"),
+                        resultSet.getString("secondname"),
                         resultSet.getShort("capacity"),
                         resultSet.getBoolean("reserved"),
-                        resultSet.getString("phoneNumber"),
-                        resultSet.getString("status"));
+                        resultSet.getString("phonenumber"),
+                        resultSet.getString("status")
+                        );
                 reservedTables.add(table);
             }
             return reservedTables;
@@ -226,18 +224,19 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false";
+            String sql = "SELECT  id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<Table> availableTables = new LinkedList<>();
             while (resultSet.next()) {
                 Table table = new Table(resultSet.getShort("id"),
-                        resultSet.getString("firstName"),
-                        resultSet.getString("secondName"),
+                        resultSet.getString("firstname"),
+                        resultSet.getString("secondname"),
                         resultSet.getShort("capacity"),
                         resultSet.getBoolean("reserved"),
-                        resultSet.getString("phoneNumber"),
-                        resultSet.getString("status"));
+                        resultSet.getString("phonenumber"),
+                        resultSet.getString("status")
+                );
                 availableTables.add(table);
             }
             return availableTables;
