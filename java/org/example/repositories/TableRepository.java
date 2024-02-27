@@ -48,7 +48,7 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE id=?";
+            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE id=? ORDER BY id";
             PreparedStatement statement = con.prepareStatement(sql);
             statement.setShort(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -81,7 +81,7 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables";
+            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables ORDER BY id";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<Table> reservedTables = new LinkedList<>();
@@ -193,7 +193,7 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = true";
+            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = true ORDER BY id";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<Table> reservedTables = new LinkedList<>();
@@ -227,7 +227,7 @@ public class TableRepository implements ITableRepository {
         Connection con = null;
         try {
             con = db.getConnection();
-            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false";
+            String sql = "SELECT id, firstName, secondName, capacity, reserved, phoneNumber, status FROM tables WHERE reserved = false ORDER BY id";
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<Table> availableTables = new LinkedList<>();
