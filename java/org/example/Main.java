@@ -5,7 +5,7 @@ import org.example.data.PostgresDB;
 import org.example.data.interfaces.IDB;
 import org.example.repositories.TableRepository;
 import org.example.repositories.interfaces.ITableRepository;
-
+// Подключение допклассов
 public class Main {
     public static void main(String[] args) {
         IDB db = new PostgresDB();

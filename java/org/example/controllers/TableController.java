@@ -11,15 +11,14 @@ public class TableController {
     public TableController(ITableRepository repository) {
         this.repository = repository;
     }
-
+// новый столик
     public String createTable(short capacity, boolean reserved) {
         Table table = new Table((short) 0, capacity, reserved);
         boolean created = repository.createTable(table);
 
         return (created ? "Table has been created" : "Table creation failed");
     }
-
-
+// показать все столы
     public String getAllTables() {
         try {
             List<Table> tables = repository.getAllTables();
@@ -33,7 +32,7 @@ public class TableController {
             return "Error getting all tables: " + e.getMessage();
         }
     }
-
+//
     public String reserveTable(short id, String firstName, String secondName, String phonenumber, boolean reserved) {
         boolean reserve = repository.reserveTable(id, firstName, secondName, phonenumber, reserved);
         return (reserve ? "Table has been reserved" : "Table reservation failed");
